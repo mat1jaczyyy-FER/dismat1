@@ -3,10 +3,10 @@
 
 # Unos podataka
 s = ["prvo", "drugo", "trece"]
-nul = [int(input("Unesite " + s[i] + " rjesenje x_" + str(i) + " karakteristicne jednadzbe: ")) for i in range(3)]
+nul = [float(input("Unesite " + s[i] + " rjesenje x_" + str(i) + " karakteristicne jednadzbe: ")) for i in range(3)]
 
 s = ["nultog", "prvog", "drugog"]
-cache = [int(input("Unesite vrijednost " + s[i] + " clana niza a_" + str(i) + ": ")) for i in range(3)]
+cache = [float(input("Unesite vrijednost " + s[i] + " clana niza a_" + str(i) + ": ")) for i in range(3)]
 
 n = int(input("Unesite redni broj n trazenog clana niza: "))
 
@@ -26,7 +26,7 @@ rj[1] = (ahde + ceag * rj[2]) / afbe
 rj[0] = (sys[0][3] - sys[0][1] * rj[1] - sys[0][2] * rj[2]) / sys[0][0]
 
 # Formula opceg rjesenja
-a = int(sum([rj[i] * (nul[i] ** n) for i in range(3)]))
+a = float(sum([rj[i] * (nul[i] ** n) for i in range(3)]))
 
 print("Vrijednost n-tog clana niza pomocu formule: " + str(a))
 
