@@ -22,11 +22,11 @@ r = 0
 def dfs(t, x, b):
     global e, r
     for i in e[x]:
-        if len(b) >= 3 and i == t: # ciklus mora imati minimalnu duljinu 3
-            r = max(r, len(b))     # max -> ostavlja najbolji rezultat, tj najdulji ciklus
+        if len(b) >= 3 and i == t:  # ciklus mora imati minimalnu duljinu 3
+            r = max(r, len(b))      # max -> ostavlja najbolji rezultat, tj najdulji ciklus
         
-        if i not in b:
-            dfs(t, i, b + [i])     # rekurzivno sirenje
+        if i not in b:   # rekurzivno sirenje prema neposjecenim tockama
+            dfs(t, i, b + [i])
 
 # Zapoceti DFS iz svake tocke
 for i in range(n):
