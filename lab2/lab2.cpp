@@ -1,7 +1,11 @@
-// Compiler flags: g++ -m64 -O3 -std=c++17 -Wall
+// Compiler flags: g++ -O3 -Wall
+// Na Windowsima koristiti mingw-w64: http://mingw-w64.org/doku.php/download/mingw-builds
+// Na 64-bitnom sustavu obavezno dodati flag -m64
+
 // Dominik Matijaca 0036524568
 
 #include <cstdio>
+#include <cstring>
 #include <functional>
 #include <string>
 #include <thread>
@@ -23,7 +27,7 @@ typedef struct {
     
     // Provjeri postojanje brida
     inline bool get(u8 i) const {
-    	return (_[i >> 6] >> (i & 0x3F)) & 1;
+        return (_[i >> 6] >> (i & 0x3F)) & 1;
     }
 
     // Poveži brid
@@ -33,7 +37,7 @@ typedef struct {
     
     // Odspoji brid
     inline void unset(u8 i) {
-   	    _[i >> 6] &= ~(1LL << (i & 0x3F));
+        _[i >> 6] &= ~(1LL << (i & 0x3F));
     }
     
     // Dohvati sve bridove za neki čvor
@@ -92,7 +96,7 @@ s32 main() {
             u8 in;
             fscanf(f, "%hhu", &in);
 
-            if (in) 
+            if (in)
                 e.set((i << 4) + j);  // Postavljanje bridova grafa
         }
     }
@@ -112,9 +116,9 @@ s32 main() {
     memset(m, n, n); // Na početku, to je broj čvorova u grafu
     
     for (u8 i = 0; i < n; i++) {
-    	for (u8 j = i + 1; j < n; j++) {
-    	    u8 x = (i << 4) + j;
-    	    if (!e.get(x)) continue; // Za svaki postojeći brid
+        for (u8 j = i + 1; j < n; j++) {
+            u8 x = (i << 4) + j;
+            if (!e.get(x)) continue; // Za svaki postojeći brid
     
             // Odspojimo brid
             u8 xm = (j << 4) + i;
@@ -125,68 +129,68 @@ s32 main() {
             
             // BFS funkcija će pokušati pronaći alternativni put za brid koji smo odspojili
             auto bfs = [&e, &c](const u8 i, const u8 j) {  // Tražimo put od i do j
-            	u16 v = 0;       // Bitfield - posjećenost čvorova (visited nodes)
-	            u16 q = 1 << i;  // Bitfield - čvorovi koje treba posjetiti u sljedećoj iteraciji (queue)
-	            c = 0;           // Resetirati broj posjećenih čvorova na 0
-	            
-	            // Dok god možemo posjetiti neki čvor (počevši od i)
-	            while (q) {
-	            	u16 qc = q; // Prekopirati queue
-	                q = 0;      // Resetirati queue za pamćenje sljedeće iteracije
-	                u8 k = 0;   // Čvor koji posjećujemo
-	                
-	                // Iteracija po queueu - posjećivanje čvorova (dok god ima bitova)
-	                while (qc) {
-		                // Pronaći sljedeći postavljeni bit, pozicija k je čvor
-	                    while (!(qc & 1)) {
-	                    	qc >>= 1;
-	                        k++;
-	                    }
-	                    
-	                    // Dohvati čvorove na koje je povezan (next nodes)
-	                    u16 nn = e.get_n(k);
-	             
-	                    if ((nn >> j) & 1) // Alternativni put je pronađen i ne treba mijenjati ništa
-	                        return (u16)0; // Zato vraćamo 0
-	                    
-	                    // Označi da je čvor istražen, i dodaj susjede u queue
-	                    v |= 1 << k;
-	                    q |= nn;
-	                    c++;
-	                    
-	                    // Sljedeći bit
-	                    qc >>= 1;
-	                    k++;
-	                }
-	                
-	                q &= ~v; // Izbriši iz queuea sve čvorove koji su već posjećeni
-	            }
-	            
-	            // Nije pronađen put. To znači da smo dobili nepovezanost
-	            return v; // Vraćamo bitfield s označenim čvorovima u tom dijelu nepovezanog grafa
+                u16 v = 0;       // Bitfield - posjećenost čvorova (visited nodes)
+                u16 q = 1 << i;  // Bitfield - čvorovi koje treba posjetiti u sljedećoj iteraciji (queue)
+                c = 0;           // Resetirati broj posjećenih čvorova na 0
+                
+                // Dok god možemo posjetiti neki čvor (počevši od i)
+                while (q) {
+                    u16 qc = q; // Prekopirati queue
+                    q = 0;      // Resetirati queue za pamćenje sljedeće iteracije
+                    u8 k = 0;   // Čvor koji posjećujemo
+                    
+                    // Iteracija po queueu - posjećivanje čvorova (dok god ima bitova)
+                    while (qc) {
+                        // Pronaći sljedeći postavljeni bit, pozicija k je čvor
+                        while (!(qc & 1)) {
+                            qc >>= 1;
+                            k++;
+                        }
+                        
+                        // Dohvati čvorove na koje je povezan (next nodes)
+                        u16 nn = e.get_n(k);
+                 
+                        if ((nn >> j) & 1) // Alternativni put je pronađen i ne treba mijenjati ništa
+                            return (u16)0; // Zato vraćamo 0
+                        
+                        // Označi da je čvor istražen, i dodaj susjede u queue
+                        v |= 1 << k;
+                        q |= nn;
+                        c++;
+                        
+                        // Sljedeći bit
+                        qc >>= 1;
+                        k++;
+                    }
+                    
+                    q &= ~v; // Izbriši iz queuea sve čvorove koji su već posjećeni
+                }
+                
+                // Nije pronađen put. To znači da smo dobili nepovezanost
+                return v; // Vraćamo bitfield s označenim čvorovima u tom dijelu nepovezanog grafa
             };
             
             // Ispitaj je li brid bio most
             u16 split = bfs(i, j);
             
             if (split) { // Ako nismo pronašli alternativan put, brid je bio most
-            	// Funkcija adjust_m ažurirat će podatke u m o veličini dijela nepovezanog grafa
+                // Funkcija adjust_m ažurirat će podatke u m o veličini dijela nepovezanog grafa
                 auto adjust_m = [&m, &split, &c]() {
-            	    u8 k = 0;
+                    u8 k = 0;
                     
-	            	while (split) {
-	            	    if (split & 1) // Za svaki čvor
-	                        m[k] = c;  // Postavi veličinu
-	            
-	                    split >>= 1;
-	                    k++;
-	                }
+                    while (split) {
+                        if (split & 1) // Za svaki čvor
+                            m[k] = c;  // Postavi veličinu
+                
+                        split >>= 1;
+                        k++;
+                    }
                 };
                 
                 adjust_m(); // Ažuriraj za dio uz i
             
                 // Potraži sve čvorove u suprotnom dijelu
-            	split = bfs(j, i);
+                split = bfs(j, i);
                 adjust_m(); // Ažuriraj za dio uz j
                 
             } else {  // Brid nije bio most, ponovno ga povezati
@@ -215,69 +219,69 @@ s32 main() {
     
     for (int i = 0; i < 16; i++) { // Početni čvor dretve i
         // Pokreni thread
-		th[i] = std::thread([&e, &m, &b, &r, &abort_all](const u8 t) {
-			if (m[t] < 3) return; // Graf s manje od 3 čvora ne može imati ciklus
-			
+        th[i] = std::thread([&e, &m, &b, &r, &abort_all](const u8 t) {
+            if (m[t] < 3) return; // Graf s manje od 3 čvora ne može imati ciklus
+            
             path p = {};  // Pamćenje puta (bez poretka - važno je izbjegavanje čvorova koje smo prošli)
             u8 abort = 0; // Ako thread dođe do optimalnog rješenja za podgraf m[t], signalizira prekid
-			
+            
             // Rekurzivna DFS funkcija koja šeta prema svim čvorovima 
             std::function<void(u8)> dfs = [&e, &m, &b, &r, &p, &t, &abort_all, &abort, &dfs](u8 x) {
-		        if (abort_all || abort) return; // Ako je signaliziran prekid, obustavljamo pretragu
-		
-		        p.set(x); // Prošli smo kroz čvor x
-		
+                if (abort_all || abort) return; // Ako je signaliziran prekid, obustavljamo pretragu
+        
+                p.set(x); // Prošli smo kroz čvor x
+        
                 // Dohvati čvorove na koje je povezan (next nodes)
-		        u16 nn = e.get_n(x);
-		        u8 i = 0;
-		
+                u16 nn = e.get_n(x);
+                u8 i = 0;
+        
                 // Iteracija po susjednim čvorovima
-		        while (nn) { 
+                while (nn) { 
                     // Pronaći sljedeći postavljeni bit, pozicija i je čvor
-		            while (!(nn & 1)) {
-		                nn >>= 1;
-		                i++;
-		            }
-		            
+                    while (!(nn & 1)) {
+                        nn >>= 1;
+                        i++;
+                    }
+                    
                     // Ako je sljedeći čvor početni, i prošli smo već bar 3 čvora, imamo ciklus p.size
-		            if (i == t && p.size >= 3 && umax(r[t], p.size) == m[t]) { // Spremi najbolji rezultat
-		                abort = 1;  // Ako je bio jednak m[t], već je idealan za podgraf, prekinuti
-		                
-		                if (r[t] == b)     // Ako je uz to idealan za cijeli graf
+                    if (i == t && p.size >= 3 && umax(r[t], p.size) == m[t]) { // Spremi najbolji rezultat
+                        abort = 1;  // Ako je bio jednak m[t], već je idealan za podgraf, prekinuti
+                        
+                        if (r[t] == b)     // Ako je uz to idealan za cijeli graf
                             abort_all = 1; // Prekinuti sve
-		
-		                return;
-		            }
-		            
+        
+                        return;
+                    }
+                    
                     // Ako nismo već prošli tim čvorom, šetamo se po njemu rekurzivno u dubinu
-		            if (!p.get(i))
-		                dfs(i);
-		                
-	                // Sljedeći bit
-		            nn >>= 1;
-		            i++;
-		        }
+                    if (!p.get(i))
+                        dfs(i);
+                        
+                    // Sljedeći bit
+                    nn >>= 1;
+                    i++;
+                }
 
                 // Returnamo unatrag iz čvora x, pa pišemo da nam više nije na putu
-		        p.unset(x);
-		    };
-		
+                p.unset(x);
+            };
+        
             // Pokrenuti DFS koji traži cikluse za početni čvor
-		    dfs(t);
+            dfs(t);
         }, i); 
-	}
-	
+    }
+    
     // Konačno rješenje zadatka - duljina najvećeg pronađenog ciklusa
-	s8 d = 0;
+    s8 d = 0;
 
-	for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < 16; i++) {
         // Pričekaj da thread i završi s radom
-		if (th[i].joinable())
+        if (th[i].joinable())
             th[i].join();
         
         // Spremi bolje rješenje
         umax(d, r[i]);
-	}
+    }
 
     // Ispis duljine najvećeg ciklusa
     printf("%d\n", d);

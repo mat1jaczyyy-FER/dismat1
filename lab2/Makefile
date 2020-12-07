@@ -1,4 +1,4 @@
-FLAGS = -m64 -O3 -std=c++17 -Wall
+FLAGS = -O3 -Wall -m64
 NAME = lab2
 
 all:
