@@ -1,4 +1,4 @@
-FLAGS = -O3 -Wall -m64
+FLAGS = -O3 -m64
 NAME = lab2
 
 all:
