@@ -147,8 +147,13 @@ s32 main() {
     }  
 
     printf("%d\n", best_sol);
-    for (u8 j = 0; j < n; j++) printf("%d ", _a[best_sol - 1].get(j));
-    printf("\n");
+
+    #ifdef DEBUG_COLORING
+        for (u8 j = 0; j < n; j++)
+            printf("%d ", _a[best_sol - 1].get(j));
+
+        printf("\n");
+    #endif
     
     return 0;
 }

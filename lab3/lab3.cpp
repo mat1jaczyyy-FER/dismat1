@@ -125,8 +125,13 @@ s32 main() {
 
     // Ispis kromatskog broja
     printf("%d\n", c);
-    for (u8 j = 0; j < n; j++) printf("%d ", a.get(j));
-    printf("\n");
+
+    #ifdef DEBUG_COLORING
+        for (u8 j = 0; j < n; j++)
+            printf("%d ", a.get(j));
+
+        printf("\n");
+    #endif
     
     return 0;
 }
