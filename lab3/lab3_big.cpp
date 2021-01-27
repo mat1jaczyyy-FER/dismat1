@@ -24,15 +24,14 @@ typedef struct {
 } edge;
 
 typedef struct {
-    u64 _[64 / 10 + 1];
+    u8 _[64];
     
     inline u8 get(u8 i) const {
-        return (_[i / 10] >> ((i % 10) * 6)) & 0x3F;
+        return _[i & 0x3F];
     }
     
     inline void set(u8 i, u8 c) {
-        u8 h = (i % 10) * 6;
-        _[i / 10] ^= (((_[i / 10] >> h) ^ c) & 0x3F) << h;
+        _[i & 0x3F] = c;
     }
 } coloring;
 
